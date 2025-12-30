@@ -29,7 +29,7 @@ export class GeminiService {
 
   async analyzeMedia(base64Data: string, mimeType: string, prompt: string): Promise<string> {
     try {
-      // Use gemini-3-pro-preview for complex visual/video tasks
+      // Use gemini-3-pro-preview for complex visual/video tasks as per requirements
       const response = await this.ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: {
@@ -44,13 +44,13 @@ export class GeminiService {
           ],
         },
         config: {
-          systemInstruction: "You are an expert content analyst. You analyze videos and images to provide creators with actionable insights, hook improvements, and quality assessments.",
+          systemInstruction: "You are an expert content analyst. You analyze videos and images to provide creators with actionable insights, hook improvements, and quality assessments. Focus on production value, viewer psychology, and engagement potential.",
         },
       });
       return response.text || "Analysis failed.";
     } catch (error) {
       console.error("Gemini Vision Error:", error);
-      return "Failed to analyze media. Please ensure the file size is within limits.";
+      return "Failed to analyze media. Please ensure the file size is within limits and is a supported format.";
     }
   }
 
@@ -58,7 +58,7 @@ export class GeminiService {
     return this.ai.chats.create({
       model: 'gemini-3-pro-preview',
       config: {
-        systemInstruction: "You are CreatorAssistant, an AI helper for CreatorOS. You help creators with video ideas, sponsorship negotiation tips, analytics interpretation, and platform growth strategies. Be concise, encouraging, and data-driven.",
+        systemInstruction: "You are CreatorAssistant, an AI helper for CreatorOS. You help creators with video ideas, sponsorship negotiation tips, analytics interpretation, and platform growth strategies. Be concise, encouraging, and provide specific examples when asked about scripts or strategy.",
       },
     });
   }
@@ -67,7 +67,7 @@ export class GeminiService {
     try {
       const response = await this.ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Generate 5 click-worthy video titles for a YouTube video about: ${topic}`,
+        contents: `Generate 5 click-worthy, high-CTR video titles for a YouTube video about: ${topic}`,
         config: {
           responseMimeType: "application/json",
           responseSchema: {
@@ -77,11 +77,11 @@ export class GeminiService {
         }
       });
       
-      const text = response.text.trim();
-      return JSON.parse(text);
+      const text = response.text || "[]";
+      return JSON.parse(text.trim());
     } catch (error) {
       console.error("Gemini Error:", error);
-      return ["Default Title 1", "Default Title 2"];
+      return ["Hooked: My Secret Growth Strategy", "Why 99% of Creators Fail at This", "The Future of Content Creation", "Mastering the Algorithm in 2024", "Step-by-Step Blueprint for Success"];
     }
   }
 }

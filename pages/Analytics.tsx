@@ -38,29 +38,32 @@ const generateData = (range: string) => {
   
   return Array.from({ length: points > 12 ? 12 : points }).map((_, i) => ({
     name: `${labelPrefix}${i + 1}`,
-    period: range === '7d' ? `Day ${i + 1} of Period` : range === '30d' ? `Week ${i + 1}` : `Month ${i + 1}`,
+    period: range === '7d' ? `Day ${i + 1} (Selected Period)` : range === '30d' ? `Week ${i + 1} of 30d` : `Month ${i + 1} of 90d`,
     views: Math.floor(Math.random() * 50000) + 10000,
     interactions: Math.floor(Math.random() * 5000) + 500,
   }));
 };
 
-const CustomTooltip = ({ active, payload, label, unit }: any) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="bg-[#18181b] border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200">
-        <p className="text-xs font-black text-zinc-500 uppercase tracking-widest mb-3 border-b border-white/5 pb-2">
-          {data.period || label}
-        </p>
-        <div className="space-y-2">
+      <div className="bg-[#18181b] border border-white/10 rounded-2xl p-4 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200 min-w-[200px]">
+        <div className="flex items-center gap-2 mb-3 border-b border-white/5 pb-2">
+          <Calendar size={12} className="text-zinc-500" />
+          <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">
+            {data.period || label}
+          </p>
+        </div>
+        <div className="space-y-3">
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center justify-between gap-8">
+            <div key={index} className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-sm font-medium text-zinc-300 capitalize">{entry.name}:</span>
+                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                <span className="text-xs font-bold text-zinc-300">{entry.name}:</span>
               </div>
-              <span className="text-sm font-bold text-white">
-                {entry.value.toLocaleString()} {unit || ''}
+              <span className="text-sm font-black text-white">
+                {entry.value.toLocaleString()}
               </span>
             </div>
           ))}
@@ -90,7 +93,6 @@ const Analytics: React.FC = () => {
     { id: 'custom', label: 'Custom Range' },
   ];
 
-  // Memoize data to prevent jitter but allow updates on state change
   const currentChartData = useMemo(() => generateData(dateRange), [dateRange]);
 
   const ytMetrics = [
@@ -119,7 +121,7 @@ const Analytics: React.FC = () => {
     },
     {
       type: 'suggestion',
-      title: 'Posting Schedule',
+      title: 'AI Posting Schedule',
       description: 'Your subscribers are most active between 6 PM - 8 PM EST. Consider shifting your Saturday uploads.',
       icon: <Sparkles size={18} className="text-purple-400" />,
       borderColor: 'border-purple-500/20',
@@ -131,12 +133,11 @@ const Analytics: React.FC = () => {
     <div className="space-y-8 pb-12">
       <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-bold">In-Depth Analytics</h2>
-          <p className="text-zinc-400">Track your performance data granularly across all platforms.</p>
+          <h2 className="text-3xl font-bold tracking-tight">Analytics Dashboard</h2>
+          <p className="text-zinc-400">Deep dive into your performance metrics and growth trends.</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
-          {/* Platform Filter */}
           <div className="flex p-1 bg-white/5 border border-white/10 rounded-2xl">
             {platforms.map(p => (
               <button
@@ -151,7 +152,6 @@ const Analytics: React.FC = () => {
             ))}
           </div>
 
-          {/* Date Range Filter */}
           <div className="relative">
             <button
               onClick={() => setIsRangeOpen(!isRangeOpen)}
@@ -164,10 +164,7 @@ const Analytics: React.FC = () => {
             
             {isRangeOpen && (
               <>
-                <div 
-                  className="fixed inset-0 z-10" 
-                  onClick={() => setIsRangeOpen(false)} 
-                />
+                <div className="fixed inset-0 z-10" onClick={() => setIsRangeOpen(false)} />
                 <div className="absolute right-0 mt-2 w-56 glass rounded-2xl p-2 z-20 shadow-2xl border border-white/10 animate-in fade-in zoom-in-95 duration-200">
                   {rangeOptions.map((option) => (
                     <button
@@ -192,20 +189,19 @@ const Analytics: React.FC = () => {
         </div>
       </header>
 
-      {/* Grid for Primary Global Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Followers gained', value: '24.5k', icon: <Users size={20} className="text-blue-400" /> },
-          { label: 'Total Likes', value: '1.4M', icon: <Heart size={20} className="text-rose-400" /> },
-          { label: 'Shares', value: '82.1k', icon: <Share2 size={20} className="text-teal-400" /> },
-          { label: 'Comments', value: '12.4k', icon: <MessageCircle size={20} className="text-indigo-400" /> },
+          { label: 'Followers Gained', value: '24.5k', icon: <Users size={20} className="text-blue-400" /> },
+          { label: 'Total Engagement', value: '1.4M', icon: <Heart size={20} className="text-rose-400" /> },
+          { label: 'Platform Reach', value: '82.1k', icon: <Share2 size={20} className="text-teal-400" /> },
+          { label: 'Global Mentions', value: '12.4k', icon: <MessageCircle size={20} className="text-indigo-400" /> },
         ].map((stat, i) => (
           <div key={i} className="glass p-6 rounded-3xl border border-white/5 hover:border-white/10 transition-colors group">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-xl bg-white/5 group-hover:bg-white/10 transition-colors">
                 {stat.icon}
               </div>
-              <p className="text-zinc-500 text-sm font-medium">{stat.label}</p>
+              <p className="text-zinc-500 text-xs font-bold uppercase tracking-wider">{stat.label}</p>
             </div>
             <h3 className="text-2xl font-bold">{stat.value}</h3>
           </div>
@@ -213,22 +209,18 @@ const Analytics: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Engagement Chart */}
         <div className="glass rounded-3xl p-8 border border-white/5">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-lg font-bold">View Velocity</h3>
-            <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Impressions focus</div>
+            <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Traffic Intensity</div>
           </div>
           <div className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={currentChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="name" stroke="#52525b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#52525b" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(val) => `${val/1000}k`} />
-                <Tooltip 
-                  cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-                  content={<CustomTooltip />}
-                />
+                <XAxis dataKey="name" stroke="#52525b" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#52525b" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => `${val/1000}k`} />
+                <Tooltip cursor={{ fill: 'rgba(255,255,255,0.03)' }} content={<CustomTooltip />} />
                 <Bar 
                   name="Views"
                   dataKey="views" 
@@ -242,18 +234,17 @@ const Analytics: React.FC = () => {
           </div>
         </div>
 
-        {/* Interaction Chart */}
         <div className="glass rounded-3xl p-8 border border-white/5">
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-lg font-bold">Interaction Trend</h3>
-            <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Engagement focus</div>
+            <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">Active Engagement</div>
           </div>
           <div className="h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={currentChartData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="name" stroke="#52525b" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#52525b" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis dataKey="name" stroke="#52525b" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="#52525b" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip content={<CustomTooltip />} />
                 <Line 
                   name="Interactions"
@@ -271,7 +262,6 @@ const Analytics: React.FC = () => {
         </div>
       </div>
 
-      {/* YouTube Performance Section */}
       <section className="space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -280,15 +270,14 @@ const Analytics: React.FC = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold">YouTube Performance</h3>
-              <p className="text-sm text-zinc-500">Video-level insights and engagement metrics</p>
+              <p className="text-sm text-zinc-500">Platform-specific metrics and AI recommendations</p>
             </div>
           </div>
-          <button className="text-sm font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
-            Full Channel Report <ArrowUpRight size={14} />
+          <button className="text-sm font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors group">
+            Export Channel Data <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </button>
         </div>
 
-        {/* Metric Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {ytMetrics.map((metric, i) => (
             <div key={i} className="glass p-6 rounded-3xl border border-white/5 hover:border-red-500/20 transition-all group">
@@ -304,17 +293,16 @@ const Analytics: React.FC = () => {
                 <p className="text-zinc-500 text-xs font-bold uppercase tracking-wider mb-1">{metric.label}</p>
                 <div className="flex items-baseline gap-2">
                   <h4 className="text-2xl font-bold">{metric.value}</h4>
-                  <span className="text-[10px] text-zinc-600 font-medium">{dateRange === '7d' ? 'this week' : 'this month'}</span>
+                  <span className="text-[10px] text-zinc-600 font-medium">{dateRange === '7d' ? 'wk' : 'mo'}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Platform Alerts & Recommendations */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {ytRecommendations.map((rec, i) => (
-            <div key={i} className={`glass p-5 rounded-2xl border ${rec.borderColor} ${rec.bgColor} flex flex-col gap-3 transition-transform hover:scale-[1.02]`}>
+            <div key={i} className={`glass p-5 rounded-2xl border ${rec.borderColor} ${rec.bgColor} flex flex-col gap-3 transition-transform hover:scale-[1.01]`}>
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-white/5">
                   {rec.icon}
@@ -325,17 +313,16 @@ const Analytics: React.FC = () => {
                 {rec.description}
               </p>
               <button className="text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-colors mt-auto pt-2 flex items-center gap-1">
-                View Details <ArrowUpRight size={10} />
+                Take Action <ArrowUpRight size={10} />
               </button>
             </div>
           ))}
         </div>
 
-        {/* Bonus: Content Health Score */}
         <div className="glass p-6 rounded-3xl border border-white/5 flex flex-col md:flex-row items-center gap-8">
           <div className="flex-1 space-y-2 text-center md:text-left">
-            <h4 className="font-bold">YouTube Content Health</h4>
-            <p className="text-sm text-zinc-400">Based on click-through rates and average view duration for the selected {dateRange === '7d' ? '7 day' : '30 day'} period.</p>
+            <h4 className="font-bold">Creator Health Score</h4>
+            <p className="text-sm text-zinc-400">Your composite score based on retention, CTR, and audience sentiment for {dateRange === '7d' ? 'last week' : 'last month'}.</p>
           </div>
           <div className="relative w-24 h-24 flex items-center justify-center">
             <svg className="w-full h-full transform -rotate-90">
@@ -344,7 +331,7 @@ const Analytics: React.FC = () => {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-xl font-black">82</span>
-              <span className="text-[8px] uppercase tracking-widest text-zinc-500">Score</span>
+              <span className="text-[8px] uppercase tracking-widest text-zinc-500">Global</span>
             </div>
           </div>
         </div>
