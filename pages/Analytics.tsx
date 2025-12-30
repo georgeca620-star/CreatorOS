@@ -38,7 +38,7 @@ const generateData = (range: string) => {
   
   return Array.from({ length: points > 12 ? 12 : points }).map((_, i) => ({
     name: `${labelPrefix}${i + 1}`,
-    period: range === '7d' ? `Day ${i + 1} (Selected Period)` : range === '30d' ? `Week ${i + 1} of 30d` : `Month ${i + 1} of 90d`,
+    period: range === '7d' ? `Day ${i + 1} of Period` : range === '30d' ? `Week ${i + 1}` : `Month ${i + 1}`,
     views: Math.floor(Math.random() * 50000) + 10000,
     interactions: Math.floor(Math.random() * 5000) + 500,
   }));
@@ -57,10 +57,10 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         </div>
         <div className="space-y-3">
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center justify-between gap-4">
+            <div key={index} className="flex items-center justify-between gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                <span className="text-xs font-bold text-zinc-300">{entry.name}:</span>
+                <span className="text-xs font-bold text-zinc-300 capitalize">{entry.name}:</span>
               </div>
               <span className="text-sm font-black text-white">
                 {entry.value.toLocaleString()}
@@ -191,7 +191,7 @@ const Analytics: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Followers Gained', value: '24.5k', icon: <Users size={20} className="text-blue-400" /> },
+          { label: 'Followers gained', value: '24.5k', icon: <Users size={20} className="text-blue-400" /> },
           { label: 'Total Engagement', value: '1.4M', icon: <Heart size={20} className="text-rose-400" /> },
           { label: 'Platform Reach', value: '82.1k', icon: <Share2 size={20} className="text-teal-400" /> },
           { label: 'Global Mentions', value: '12.4k', icon: <MessageCircle size={20} className="text-indigo-400" /> },
@@ -270,14 +270,15 @@ const Analytics: React.FC = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold">YouTube Performance</h3>
-              <p className="text-sm text-zinc-500">Platform-specific metrics and AI recommendations</p>
+              <p className="text-sm text-zinc-500">Video-level insights and AI suggestions</p>
             </div>
           </div>
           <button className="text-sm font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors group">
-            Export Channel Data <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            Export Report <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </button>
         </div>
 
+        {/* Metric Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {ytMetrics.map((metric, i) => (
             <div key={i} className="glass p-6 rounded-3xl border border-white/5 hover:border-red-500/20 transition-all group">
@@ -300,6 +301,7 @@ const Analytics: React.FC = () => {
           ))}
         </div>
 
+        {/* Platform Alerts & Recommendations */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {ytRecommendations.map((rec, i) => (
             <div key={i} className={`glass p-5 rounded-2xl border ${rec.borderColor} ${rec.bgColor} flex flex-col gap-3 transition-transform hover:scale-[1.01]`}>
@@ -319,10 +321,11 @@ const Analytics: React.FC = () => {
           ))}
         </div>
 
+        {/* Bonus: Content Health Score */}
         <div className="glass p-6 rounded-3xl border border-white/5 flex flex-col md:flex-row items-center gap-8">
           <div className="flex-1 space-y-2 text-center md:text-left">
             <h4 className="font-bold">Creator Health Score</h4>
-            <p className="text-sm text-zinc-400">Your composite score based on retention, CTR, and audience sentiment for {dateRange === '7d' ? 'last week' : 'last month'}.</p>
+            <p className="text-sm text-zinc-400">Your composite score based on audience retention, CTR, and sentiment for {dateRange === '7d' ? 'last week' : 'last month'}.</p>
           </div>
           <div className="relative w-24 h-24 flex items-center justify-center">
             <svg className="w-full h-full transform -rotate-90">
