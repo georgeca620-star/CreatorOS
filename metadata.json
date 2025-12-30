@@ -1,0 +1,8 @@
+{
+  "name": "CreatorOS",
+  "description": "A comprehensive creator management platform for YouTubers, Instagram creators, and TikTokers to manage analytics, brand deals, invoices, and AI-powered scheduling.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
